@@ -24,6 +24,7 @@ if (flutterVersionName == null) {
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+apply plugin: 'com.huawei.agconnect' // HMS
 
 android {
     compileSdkVersion flutter.compileSdkVersion
@@ -50,11 +51,29 @@ android {
         versionName flutterVersionName
     }
 
-    buildTypes {
+   /* HMS - server verify signature */
+    signingConfigs {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            storeFile file('hms.keystore')
+            keyAlias 'alias_name'
+            keyPassword 'hms@12345678'
+            storePassword 'hms@12345678'
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+    }
+
+    /* HMS - server verify signature */
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }

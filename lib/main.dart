@@ -53,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void initState() {
-    HuaweiMapInitializer.initializeMap();
+    //HuaweiMapInitializer.initializeMap();
     super.initState();
   }
 

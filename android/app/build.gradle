@@ -27,7 +27,7 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 apply plugin: 'com.huawei.agconnect' // HMS
 
 android {
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdkVersion  31//flutter.compileSdkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -46,9 +46,10 @@ android {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.example.hmsboxflutter"
         minSdkVersion 19 // HMS
-        targetSdkVersion flutter.targetSdkVersion
+        targetSdkVersion 31 //flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        manifestPlaceholders = [applicationName: "android.app.Application"]
     }
 
    /* HMS - server verify signature */
@@ -65,13 +66,18 @@ android {
 
     /* HMS - server verify signature */
     buildTypes {
+        build{
+            manifestPlaceholders = [applicationName: "android.app.Application"]
+        }
         debug {
             signingConfig signingConfigs.release
+            manifestPlaceholders = [applicationName: "android.app.Application"]
             //minifyEnabled false
             //proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         release {
             signingConfig signingConfigs.release
+            manifestPlaceholders = [applicationName: "android.app.Application"]
             //minifyEnabled false
             //proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }

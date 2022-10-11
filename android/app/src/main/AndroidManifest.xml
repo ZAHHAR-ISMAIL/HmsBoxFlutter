@@ -38,5 +38,16 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <meta-data 
+            android:name="push_kit_auto_init_enabled" 
+            android:value="true" /> 
+        <receiver
+            android:name="com.huawei.hms.flutter.push.receiver.BackgroundMessageBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.huawei.hms.flutter.push.receiver.BACKGROUND_REMOTE_MESSAGE"/>
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

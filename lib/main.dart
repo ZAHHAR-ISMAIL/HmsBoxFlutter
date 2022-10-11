@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:huawei_map/map.dart';
+import 'package:huawei_push/huawei_push.dart';
 
 void main() {
   runApp(const MyApp());
@@ -51,10 +52,78 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  String _token = '';
+
+  void _onTokenEvent(String event) {
+    // Requested tokens can be obtained here
+    setState(() {
+      _token = event;
+    });
+    print("TokenEvent!: " + _token);
+  }
+
+  void _onTokenError(Object error) {
+    //PlatformException e = error;
+    print("TokenErrorEvent!: " + error.toString());
+  }
+
+  void _onMessageReceived(RemoteMessage remoteMessage) {
+    // Called when a data message is received
+    String? data = remoteMessage.data;
+    print("Push Notification:: " + data.toString());
+  }
+
+  void _onMessageReceiveError(Object error) {
+    // Called when an error occurs while receiving the data message
+  }
 
   void initState() {
     //HuaweiMapInitializer.initializeMap();
     super.initState();
+    initTokenStream();
+    initMessageStream();
+    initMessageStreamForBackground();
+    getToken();
+    subscribe();
+  }
+
+  Future<void> initTokenStream() async {
+    if (!mounted) return;
+    Push.getTokenStream.listen(_onTokenEvent, onError: _onTokenError);
+  }
+
+  Future<void> initMessageStream() async {
+    if (!mounted) return;
+    Push.onMessageReceivedStream
+        .listen(_onMessageReceived, onError: _onMessageReceiveError);
+  }
+
+  Future<void> initMessageStreamForBackground() async {
+    //print("idkidk");
+    bool backgroundMessageHandler =
+        await Push.registerBackgroundMessageHandler(backgroundMessageCallback);
+    print("backgroundMessageHandler registered: $backgroundMessageHandler");
+  }
+
+  static void backgroundMessageCallback(RemoteMessage remoteMessage) async {
+    String? data = remoteMessage.data;
+
+    Push.localNotification({
+      HMSLocalNotificationAttr.TITLE: '[Headless] DataMessage Received',
+      HMSLocalNotificationAttr.MESSAGE: data
+    });
+  }
+
+  void getToken() async {
+    // Call this method to request for a token
+    print("___Request for a token !!!!!!!!!");
+    Push.getToken("");
+  }
+
+  void subscribe() async {
+    String topic = "testTopic";
+    String result = await Push.subscribe(topic);
+    print("pushsubscribe token !!");
   }
 
   void _incrementCounter() {

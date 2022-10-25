@@ -1,6 +1,8 @@
 # hmsboxflutter
 
-A new Flutter project.
+Flutter HMS Map kit Example .
+
+![image info](./screenshot.jpeg)
 
 ## Getting Started
 

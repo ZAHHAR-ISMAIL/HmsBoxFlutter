@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
 import 'package:huawei_map/map.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  // const MyApp({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
@@ -26,13 +27,13 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  // const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -43,28 +44,37 @@ class MyHomePage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
-  final String title;
+  // final String title;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  PermissionStatus _status;
 
   void initState() {
     //HuaweiMapInitializer.initializeMap();
     super.initState();
+    _requestPerms();
   }
 
-  void _incrementCounter() {
+  void _requestPerms() async {
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.locationWhenInUse,
+      Permission.locationAlways
+    ].request();
+
+    if (await Permission.locationWhenInUse.serviceStatus.isEnabled) {
+      _updateStatus(PermissionStatus.granted);
+      setState(() {});
+      //openAppSettings();
+    }
+  }
+
+  void _updateStatus(PermissionStatus value) {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      _status = value;
     });
   }
 
@@ -80,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text("Flutter HMS Map Kit Demo"),
       ),
       body: Stack(
           // ignore: prefer_const_literals_to_create_immutables
@@ -92,14 +102,10 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               mapType: MapType.normal,
               tiltGesturesEnabled: true,
+              myLocationButtonEnabled: true,
+              myLocationEnabled: true,
             )
           ]),
-
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
